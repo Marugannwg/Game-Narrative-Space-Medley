@@ -1,0 +1,1 @@
+{"utterances-index": {"story": ["<class 'str'>"], "tokenized_sents": ["<class 'list'>"], "normalized_sents": ["<class 'list'>"]}, "speakers-index": {"utterance_count": ["<class 'int'>"], "is_major": ["<class 'bool'>"]}, "conversations-index": {"utterance_count": ["<class 'int'>"]}, "overall-index": {}, "version": 3, "vectors": []}
