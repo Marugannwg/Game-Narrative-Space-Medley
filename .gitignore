@@ -1,2 +1,4 @@
 
 data/Arknights_plot/corpus/conversation_embeddings_1.csv
+data/Arknights_plot/embedding/utterance_embeddings.json
+data/Arknights_plot/embedding/conversation_embeddings_1.csv

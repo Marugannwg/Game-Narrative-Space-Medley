@@ -8,21 +8,39 @@ from tqdm.auto import tqdm  # for the loading bar
 import convokit
 
 
+def get_embedding(client, text, model="text-embedding-3-large"):
+    """
+    Get the embedding for a given text using the OpenAI API.
 
-def get_embedding(text, model="text-embedding-3-large"):
+    Args:
+    text (str): The input text.
+    model (str): The name of the model to use for the embedding.
+    """
     text = text.replace("\n", " ")
     response = client.embeddings.create(input=[text], model=model)
     return response.data[0].embedding
 
 
 def get_dialogue_text(utterance):
+    """
+    Get the text representation of a dialogue from an utterance.
+
+    Args:
+    utterance (convokit.Utterance): The utterance object.
+    """
     speaker = utterance.speaker.id
     dialogue = utterance.text
     return f"{speaker}: {dialogue}\n"
 
 
+def get_conversation_chunks(corpus, convo_id, max_length=500):
+    """
+    Split a conversation into chunks of text with a maximum length.
 
-def get_conversation_chunks(convo_id, max_length=2000):
+    Args:
+    convo_id (str): The conversation ID.
+    max_length (int): The maximum length of each text chunk.
+    """
     text = ""
     chunks = []
     
@@ -42,14 +60,31 @@ def get_conversation_chunks(convo_id, max_length=2000):
     
     return chunks
 
-def process_conversation_chunks(convo_id):
-    chunks = get_conversation_chunks(convo_id)
-    embeddings = [get_embedding(chunk) for chunk in chunks]
+def process_conversation_chunks(corpus, convo_id):
+    """
+    Process the text chunks of a conversation to obtain their embeddings.
+
+    Args:
+    convo_id (str): The conversation ID.
+
+    Returns:
+    convo_id (str): The conversation ID.
+    embeddings (list): The list of embeddings for the text chunks.
+    """
+    chunks = get_conversation_chunks(corpus, convo_id)
+    embeddings = [get_embedding(client, chunk) for chunk in chunks]
     return convo_id, embeddings
 
-def process_and_write_chunk(convo_id, text_chunk):
+def process_and_write_chunk(client, convo_id, text_chunk, lock, filename):
+    """
+    Process a text chunk to obtain its embedding and write it to a CSV file.
+
+    Args:
+    convo_id (str): The conversation ID.
+    text_chunk (str): The text chunk. 
+    """
     # Process the text chunk to obtain the embedding
-    embedding = get_embedding(text_chunk)
+    embedding = get_embedding(client, text_chunk)
     # Convert the embedding array into a string representation
     embedding_str = " ".join(map(str, embedding))
     
@@ -63,19 +98,20 @@ def process_and_write_chunk(convo_id, text_chunk):
 
 
 
-output_dir = "D:/MACSS PROGRAM/30122/MACS-60000-2024-Winter/data/Arknights_plot/corpus"
-# Load the corpus from the saved directory
-corpus = convokit.model.corpus.Corpus(output_dir)
 
-client = OpenAI()
-
-# Filename for the CSV output
-filename = "conversation_embeddings_1.csv"
-
-# Initialize a lock for thread-safe writing to the CSV file
-lock = Lock()
 
 if __name__ == "__main__":
+    input_dir = "data/Arknights_plot/corpus"
+    # Load the corpus from the saved directory
+    corpus = convokit.model.corpus.Corpus(input_dir)
+
+    client = OpenAI()
+
+    # Filename for the CSV output
+    filename = "conversation_embeddings_1.csv"
+
+    # Initialize a lock for thread-safe writing to the CSV file
+    lock = Lock()
     # Open the CSV file and write the header
     with open(filename, mode="w", newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
@@ -92,10 +128,16 @@ if __name__ == "__main__":
         
         # Iterate through conversation IDs and their text chunks
         for convo_id in conversation_ids:
-            text_chunks = get_conversation_chunks(convo_id)
+            text_chunks = get_conversation_chunks(corpus, convo_id)
             for text_chunk in text_chunks:
                 # Submit the processing and writing task for each text chunk
-                futures.append(executor.submit(process_and_write_chunk, convo_id, text_chunk))
+                futures.append(executor.submit(process_and_write_chunk, 
+                                                  client,
+                                               convo_id, 
+                                               text_chunk,
+                                                lock,
+                                                filename
+                                               ))
 
         # Using tqdm to display a loading bar
         for future in tqdm(as_completed(futures), total=len(futures)):
