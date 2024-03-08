@@ -13,6 +13,7 @@ def get_embedding(client, text, model="text-embedding-3-large"):
     Get the embedding for a given text using the OpenAI API.
 
     Args:
+    client (openai.OpenAI): The OpenAI API client.
     text (str): The input text.
     model (str): The name of the model to use for the embedding.
     """
