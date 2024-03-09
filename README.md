@@ -1,27 +1,22 @@
-# Game-Narrative-Space-Medley
+# Game Narrative Medley Project
 
-A project focusing on *Computationally* understanding the narrative structures, themes, and **character** dynamics within a *game's storytelling* and its surrounding ecosystem, i.e., commentaries and fan-created content. Some related research questions:
+Welcome to the Game Narrative Medley Project repository! This is an ongoing project aimed to dive deep into the *mobile gacha game* narrative. For now, this place curated a sample corpus made from 'Arknights' story plot for concept testing.
 
-- How different characters (e.g. protagonists versus antagonists; main characters versus mascot-like figures) are portraited differently in-game and perceived differently by audiences?
-- What are some key qualities and themes surrounding those popular characters? How these topics and themes differ in game and out game?
-- How moral judgement might differ in-game versus in fan-created content? (i.e., We might expect a character is perceived in a different or complicated manner when it comes to the commentary and fan creation around them?)
-- …
+My goal is to explore the intricacies of character interactions and story progression within the game using computational social science methods.
 
-Data Collection:
+## Repository Structure
 
-- In-game Dialogues: Scrape and/or extract all dialogues from (at least one) game. This represent the context of the original game.
-    - Currently prepared corpora includes all story telling of *Arknights*.
-- Community Content: Collecting discussion posts, commentary, and fanfiction from forums, social media platforms, and fanfiction websites, representing variously contexts developed around game culture and ecosystems
-    - Currently exploring *Reddit* and *AO3* API. Example data include keyword search on several *Arknights* characters to extract all discussion and fanfiction involve those characters.
+The repository currently has: 
 
-Methodologies:
+- `corpus_creation.ipynb`: Contains scripts for cleaning and structuring the raw game text data into a ConvoKit corpus format. This also include some visualized usage case (e.g. interesting network plot of game characters~!)
 
-- Text preprocessing: In-game dialogues and blogs/discussions surrounding the game often have an informal nature, which means they may require extra cleaning and normalization before proceeding.
-- Text Embedding: The key aspect of the project is to explore text-to-vec and NLP techniques. Besides direct Word2Vec or Doc2Vec, I’m also planning to use BRET, LLaMa2, or GPT for generating text embedding. These embeddings are the core tools to capture the contextual meaning of words and phrases, allowing deeper analysis of narrative.
+- `LLM_interactions.ipynb`: Encapsulated functions to quickly interact with OpenAI, Mistral, and Anthropic API with prompt inputs. Includes code for classifying characters into major or non-major roles / archetypes using their LLMs. 
 
-(With the embedding available…)
+- `embed_text.ipynb` && `embedding_analyses.ipynb`: Features scripts for generating and analyzing word2vec, doc2vec and LLM embeddings; Contains the pipeline for retrieving the most relevant contexts to a given query using LLM embeddings; Q&A function with 'Arknights' context-awaring GPT Agent is also included -- look into the [embedding fold](data\Arknights_plot\embedding) to obtain the data if you want to try.
 
-- Exploring vector space: Compare and contrast the similarity of the different embedding among in-game and out-game text. Many question can be potentially explored with the similarity:
-    - Simply, what characters are perceived similarly in different space?
-    - If we project text embedding around a dialogue to a semantic space (with the help of LLM as baseline, e.g. good/bad, strong/weak….), how might this differ in-game versus out-game?
-- Clustering and Topic Modeling: This my help identify common narrative themes and character archetypes within game and fan contents.
+If you are looking for **Data Preparation**:
+   - `raw_text_explore.ipynb` folder contains scripts that clean and transform raw game text data into a format that ConvoKit can use for conversation analysis.
+   - `corpus_creation.ipynb` -- This is the actally implementations of a ConvoKit-compatible corpus. 
+
+
+If you are exploring LLMs and story: try `corpus_creation.ipynb` and `embedding_analyses.ipynb` -- they have lots of plots and usage cases.
