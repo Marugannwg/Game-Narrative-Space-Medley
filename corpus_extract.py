@@ -1,3 +1,9 @@
+"""
+utility python: run this with corpus to get the embedding for dialogues
+
+"""
+
+
 import os
 import re
 import pandas as pd
